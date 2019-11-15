@@ -35,18 +35,18 @@ win = pygame.display.set_mode((W, H), pygame.RESIZABLE)
 pygame.display.set_caption("First Game")
 
 # loads all of the sprites into the file using 'pygame.image.load('img.png')'
-walkRight = [pygame.image.load('R1.png'), pygame.image.load('R2.png'),
-             pygame.image.load('R3.png'), pygame.image.load('R4.png'),
-             pygame.image.load('R5.png'), pygame.image.load('R6.png'),
-             pygame.image.load('R7.png'), pygame.image.load('R8.png'),
-             pygame.image.load('R9.png')]
-walkLeft = [pygame.image.load('L1.png'), pygame.image.load('L2.png'),
-            pygame.image.load('L3.png'), pygame.image.load('L4.png'),
-            pygame.image.load('L5.png'), pygame.image.load('L6.png'),
-            pygame.image.load('L7.png'), pygame.image.load('L8.png'),
-            pygame.image.load('L9.png')]
-bg = pygame.image.load('bg.jpg')          # background image
-char = pygame.image.load('standing.png')  # idle image
+walkRight = [pygame.image.load('pics/R1.png'), pygame.image.load('pics/R2.png'),
+             pygame.image.load('pics/R3.png'), pygame.image.load('pics/R4.png'),
+             pygame.image.load('pics/R5.png'), pygame.image.load('pics/R6.png'),
+             pygame.image.load('pics/R7.png'), pygame.image.load('pics/R8.png'),
+             pygame.image.load('pics/R9.png')]
+walkLeft = [pygame.image.load('pics/L1.png'), pygame.image.load('pics/L2.png'),
+            pygame.image.load('pics/L3.png'), pygame.image.load('pics/L4.png'),
+            pygame.image.load('pics/L5.png'), pygame.image.load('pics/L6.png'),
+            pygame.image.load('pics/L7.png'), pygame.image.load('pics/L8.png'),
+            pygame.image.load('pics/L9.png')]
+bg = pygame.image.load('pics/bg.jpg')          # background image
+char = pygame.image.load('pics/standing.png')  # idle image
 
 # sets a clock and the FPS
 clock = pygame.time.Clock()
