@@ -1,26 +1,31 @@
 """
     This is a very basic game buit using pygame
-    The objective is to turn it into a platformer/shooter (open to suggestions).
+    The objective is to make a platformer/shooter (open to suggestions).
     Main Issues:
-        1) I wish to have a the ability to spirnt, but it sometimes crashes unexpcetedly;
+        1) I wish to have a the ability to spirnt,
+           but it sometimes crashes unexpcetedly;
         2) No projectile class nor shooting function (shooting animation??)
         3) No collision detection, no platforms for platforming
         4) no enemies
             i) no death animations
             ii) no health bar / health pick ups
         5) Backdropp is currently too small dont know how to resize
-        6) only one screen at the moment (sidescroller? or maybe hard screen changes like in calstevainia or metroid?)
-        7) I DID NOT make the sprites in use preferably we would make them or at least change the ones available
+        6) only one screen at the moment (sidescroller? or maybe hard screen
+           changes like in calstevainia or metroid?)
+        7) I DID NOT make the sprites in use preferably we would make them or
+           at least change the ones available
     potential improvements:
         1) life systems, how many lives do you get before a game over
         2) winning condition
         3) score system??
-        4) upgrade system (if time permits)/power ups or other form of pickup (inventory?)
+        4) upgrade system /power ups or other form of pickup (inventory?)
         5) extra mobility options (rolling/double jump/crouch)
         6) more veriety in enemy types, attributes health
         7) pause menu (level select, restart, quit to main)
-        8) title screen (dificulty setting, character select, save states(level passcodes), enimey encylopedea)
-        9) if the game is simple enough and time permits machine learning to teach the game to play itself (unlikely or is another project idea)
+        8) title screen (dificulty setting, character select,
+           save states(level passcodes), enimey encylopedea)
+        9) if the game is simple enough and time permits machine learning to
+           each the game to play itself (unlikely or is another project idea)
 """
 import pygame  # allows for 'easy' gamedev
 
@@ -35,23 +40,29 @@ W = 500
 H = 480
 
 # opens a new window that is resizable named first game
-win = pygame.display.set_mode((W, H))  #, pygame.RESIZABLE)
+win = pygame.display.set_mode((W, H))  # , pygame.RESIZABLE)
 pygame.display.set_caption("First Game")
 
-# loads all of the sprites into the file using 'pygame.image.load('img.png')'
-
 # loads all of the right walking art into an array to be cycled through
-walkRight = [pygame.image.load('pics/R1.png'), pygame.image.load('pics/R2.png'),
-             pygame.image.load('pics/R3.png'), pygame.image.load('pics/R4.png'),
-             pygame.image.load('pics/R5.png'), pygame.image.load('pics/R6.png'),
-             pygame.image.load('pics/R7.png'), pygame.image.load('pics/R8.png'),
+walkRight = [pygame.image.load('pics/R1.png'),
+             pygame.image.load('pics/R2.png'),
+             pygame.image.load('pics/R3.png'),
+             pygame.image.load('pics/R4.png'),
+             pygame.image.load('pics/R5.png'),
+             pygame.image.load('pics/R6.png'),
+             pygame.image.load('pics/R7.png'),
+             pygame.image.load('pics/R8.png'),
              pygame.image.load('pics/R9.png')]
 
 # does the same thing for the left walking art
-walkLeft = [pygame.image.load('pics/L1.png'), pygame.image.load('pics/L2.png'),
-            pygame.image.load('pics/L3.png'), pygame.image.load('pics/L4.png'),
-            pygame.image.load('pics/L5.png'), pygame.image.load('pics/L6.png'),
-            pygame.image.load('pics/L7.png'), pygame.image.load('pics/L8.png'),
+walkLeft = [pygame.image.load('pics/L1.png'),
+            pygame.image.load('pics/L2.png'),
+            pygame.image.load('pics/L3.png'),
+            pygame.image.load('pics/L4.png'),
+            pygame.image.load('pics/L5.png'),
+            pygame.image.load('pics/L6.png'),
+            pygame.image.load('pics/L7.png'),
+            pygame.image.load('pics/L8.png'),
             pygame.image.load('pics/L9.png')]
 
 bg = pygame.image.load('pics/bg.jpg')          # background image
@@ -94,7 +105,7 @@ class player(object):
         # elif walkCount + 1 >= 18 and sprint:
         #     walkCount = 0
 
-        if self.walkCount + 1 >= FPS:
+        if self.walkCount + 1 >= 27:
             self.walkCount = 0
 
         if not self.standing:
@@ -132,11 +143,72 @@ class projectile(object):
         pygame.draw.circle(win, self.color, (self.x, self.y), self.radius)
 
 
+class enemy(object):
+    walkRight = [pygame.image.load('pics/R1E.png'),
+                 pygame.image.load('pics/R2E.png'),
+                 pygame.image.load('pics/R3E.png'),
+                 pygame.image.load('pics/R4E.png'),
+                 pygame.image.load('pics/R5E.png'),
+                 pygame.image.load('pics/R6E.png'),
+                 pygame.image.load('pics/R7E.png'),
+                 pygame.image.load('pics/R8E.png'),
+                 pygame.image.load('pics/R9E.png'),
+                 pygame.image.load('pics/R10E.png'),
+                 pygame.image.load('pics/R11E.png')]
+    walkLeft = [pygame.image.load('pics/L1E.png'),
+                pygame.image.load('pics/L2E.png'),
+                pygame.image.load('pics/L3E.png'),
+                pygame.image.load('pics/L4E.png'),
+                pygame.image.load('pics/L5E.png'),
+                pygame.image.load('pics/L6E.png'),
+                pygame.image.load('pics/L7E.png'),
+                pygame.image.load('pics/L8E.png'),
+                pygame.image.load('pics/L9E.png'),
+                pygame.image.load('pics/L10E.png'),
+                pygame.image.load('pics/L11E.png')]
+
+    def __init__(self, x, y, width, height, end):
+        self.x = x
+        self.y = y
+        self.w = width
+        self.h = height
+        self.end = end
+        self.path = [self.x, self.end]
+        self.walkCount = 0
+        self.vel = 3
+
+    def draw(self, win):
+        self.move()
+        if self.walkCount + 1 >= 33:
+            self.walkCount = 0
+        if self.vel > 0:
+            win.blit(self.walkRight[self.walkCount//3], (self.x, self.y))
+            self.walkCount += 1
+        else:
+            win.blit(self.walkLeft[self.walkCount//3], (self.x, self.y))
+            self.walkCount += 1
+
+    def move(self):
+        if self.vel > 0:
+            if self.x + self.vel < self.path[1]:
+                self.x += self.vel
+            else:
+                self.vel *= -1
+                self.walkCount = 0
+        else:
+            if self.x - self.vel > self.path[0]:
+                self.x += self.vel
+            else:
+                self.vel *= -1
+                self.walkCount = 0
+
+
 # redraws the window after every frame
 def redrawGameWindow():
 
     win.blit(bg, (0, 0))  # uses the picture stored in bg as the background
     man.draw(win)
+    zombie.draw(win)
     for bullet in bullets:
         bullet.draw(win)
     pygame.display.update()
@@ -151,6 +223,7 @@ prevPress = False
 
 # main loop
 man = player(W/2, 400, 64, 64)
+zombie = enemy(W/4, 400, 64, 64, 3*W/4)
 run = True
 while run:
     clock.tick(FPS)
@@ -163,9 +236,9 @@ while run:
         # **********FIXME************#
         # # properly resizes the game
         # if event.type == pygame.VIDEORESIZE:
-        #     win = pygame.display.set_mode((event.w, event.h), pygame.RESIZABLE)
         #     W = event.w
         #     H = event.h
+        #     win = pygame.display.set_mode((W, H), pygame.RESIZABLE)
 
     for bullet in bullets:
         if bullet.x > W or bullet.x < 0:
