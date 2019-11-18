@@ -78,7 +78,7 @@ class player(object):
         self.staning = True
         # self.sprint = False
 
-    # Does the drawing for the character here to clean up the redrawGameWindow function
+    # Does the drawing for the character here to clean up redrawGameWindow 
     def draw(self, win):
         # ******FIXME***********************#
         # supposed to work for if im walking or sprinting
@@ -143,6 +143,7 @@ def redrawGameWindow():
 man = player(300, 400, 64, 64)
 bullets = []
 run = True
+
 while run:
     clock.tick(FPS)
 
@@ -156,7 +157,7 @@ while run:
         # if event.type == pygame.VIDEORESIZE:
         #     win = pygame.display.set_mode((event.w, event.h), pygame.RESIZABLE)
         #     W = event.w
-        #     Ht = event.h
+        #     H = event.h
 
     for bullet in bullets:
         if bullet.x > W or bullet.x < 0:
@@ -212,6 +213,7 @@ while run:
             black = [0, 0, 0]
             bullet = projectile(Bx, By, 6, black, f)
             bullets.append(bullet)
+
     # jumping algorithim, needs improvemnt to parabolic in my oppinion
     if not (man.isJump):
         if keys[pygame.K_UP]:
