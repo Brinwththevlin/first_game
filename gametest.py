@@ -26,7 +26,10 @@ import pygame  # allows for 'easy' gamedev
 
 # initiates the pygame
 pygame.init()
+pygame.mixer.music.load("music.mp3")
+pygame.mixer.music.play()
 
+mute = False
 # initial window sizes
 W = 500
 H = 480
@@ -181,14 +184,37 @@ while run:
     #     sprint = False
     #     vel = 5
 
+
+    # needs to be fixed so that the bullet are more spreed out.
+    # they currently send in one big clump unless you press space for exactly one frame. 
+    if keys[pygame.K_SPACE]:
+        if len(bullets) < 8:
+            if man.left:
+                f = -1
+            else:
+                f = 1
+            Bx = round(man.x+man.w//2)
+            By = round(man.y+man.h//2)
+            black = [0, 0, 0]
+            bullet = projectile(Bx, By, 6, black, f)
+            bullets.append(bullet)
+
+    if keys[pygame.K_m]:
+        if mute == False:
+            pygame.mixer.music.set_volume(0)
+            mute = True
+        else:
+            pygame.mixer.music.set_volume(.3)
+            mute = False
+
     # uses arrow keys or WASD to move left and right
-    if keys[pygame.K_LEFT]:
+    if keys[pygame.K_a]:
         man.x -= man.vel
         man.left = True
         man.right = False
         man.standing = False
 
-    elif keys[pygame.K_RIGHT]:
+    elif keys[pygame.K_d]:
         man.x += man.vel
         man.right = True
         man.left = False
@@ -202,21 +228,9 @@ while run:
     elif man.x > W:
         man.x = -(3*man.w/4)
 
-    if keys[pygame.K_SPACE]:
-        if len(bullets) < 5:
-            if man.left:
-                f = -1
-            else:
-                f = 1
-            Bx = round(man.x+man.w//2)
-            By = round(man.y+man.h//2)
-            black = [0, 0, 0]
-            bullet = projectile(Bx, By, 6, black, f)
-            bullets.append(bullet)
-
     # jumping algorithim, needs improvemnt to parabolic in my oppinion
     if not (man.isJump):
-        if keys[pygame.K_UP]:
+        if keys[pygame.K_w]:
             man.isJump = True
             man.walkCount = 0
     else:
