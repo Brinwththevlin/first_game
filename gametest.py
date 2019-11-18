@@ -7,7 +7,7 @@
         3) No collision detection, no platforms for platforming
         4) no enemies
             i) no death animations
-            ii) no health bar /health pick ups
+            ii) no health bar / health pick ups
         5) Backdropp is currently too small dont know how to resize
         6) only one screen at the moment (sidescroller? or maybe hard screen changes like in calstevainia or metroid?)
         7) I DID NOT make the sprites in use preferably we would make them or at least change the ones available
@@ -35,7 +35,7 @@ W = 500
 H = 480
 
 # opens a new window that is resizable named first game
-win = pygame.display.set_mode((W, H), pygame.RESIZABLE)
+win = pygame.display.set_mode((W, H))  #, pygame.RESIZABLE)
 pygame.display.set_caption("First Game")
 
 # loads all of the sprites into the file using 'pygame.image.load('img.png')'
@@ -75,13 +75,13 @@ class player(object):
         self.vel = 5
         self.isJump = False
         self.jumpCount = jumpFrames
-        self.left = False
+        self.left = True
         self.right = False
         self.walkCount = 0
         self.staning = True
         # self.sprint = False
 
-    # Does the drawing for the character here to clean up redrawGameWindow 
+    # Does the drawing for the character here to clean up redrawGameWindow
     def draw(self, win):
         # ******FIXME***********************#
         # supposed to work for if im walking or sprinting
@@ -142,11 +142,16 @@ def redrawGameWindow():
     pygame.display.update()
 
 
-# main loop
-man = player(300, 400, 64, 64)
+# gun information
+magSize = 10
 bullets = []
-run = True
+bulletBuffer = 6
+bufferCount = 0
+prevPress = False
 
+# main loop
+man = player(W/2, 400, 64, 64)
+run = True
 while run:
     clock.tick(FPS)
 
@@ -184,23 +189,29 @@ while run:
     #     sprint = False
     #     vel = 5
 
-
-    # needs to be fixed so that the bullet are more spreed out.
-    # they currently send in one big clump unless you press space for exactly one frame. 
+    # allows you to fire bullets (they dont clump any more)
     if keys[pygame.K_SPACE]:
-        if len(bullets) < 8:
-            if man.left:
-                f = -1
-            else:
-                f = 1
-            Bx = round(man.x+man.w//2)
-            By = round(man.y+man.h//2)
-            black = [0, 0, 0]
-            bullet = projectile(Bx, By, 6, black, f)
-            bullets.append(bullet)
+        if bufferCount >= bulletBuffer:
+            bufferCount = 0
+        if not prevPress or bufferCount == 0:
+            if len(bullets) < magSize:
+                if man.left:
+                    f = -1
+                else:
+                    f = 1
+                Bx = round(man.x+man.w//2)
+                By = round(man.y+man.h//2)
+                black = [0, 0, 0]
+                bullet = projectile(Bx, By, 4, black, f)
+                bullets.append(bullet)
+                prevPress = True
+        bufferCount += 1
+    else:
+        prevPress = False
 
+    # ability to mute the music
     if keys[pygame.K_m]:
-        if mute == False:
+        if not mute:
             pygame.mixer.music.set_volume(0)
             mute = True
         else:
@@ -223,6 +234,7 @@ while run:
         man.standing = True
         man.walkCount = 0
 
+    # allows to warp to ther other end of the screen
     if man.x < -(3*man.w/4):
         man.x = W - man.w/4
     elif man.x > W:
