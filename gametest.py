@@ -4,15 +4,14 @@
     Main Issues:
         1) I wish to have a the ability to spirnt,
            but it sometimes crashes unexpcetedly;
-        2) No projectile class nor shooting function (shooting animation??)
-        3) No collision detection, no platforms for platforming
-        4) no enemies
+        2) No collision detection, no platforms for platforming
+        3) need to change the enemy
             i) no death animations
             ii) no health bar / health pick ups
-        5) Backdropp is currently too small dont know how to resize
-        6) only one screen at the moment (sidescroller? or maybe hard screen
+        4) need to change the  back dorp
+        5) only one screen at the moment (sidescroller? or maybe hard screen
            changes like in calstevainia or metroid?)
-        7) I DID NOT make the sprites in use preferably we would make them or
+        6) I DID NOT make the sprites in use preferably we would make them or
            at least change the ones available
     potential improvements:
         1) life systems, how many lives do you get before a game over
@@ -20,12 +19,12 @@
         3) score system??
         4) upgrade system /power ups or other form of pickup (inventory?)
         5) extra mobility options (rolling/double jump/crouch)
-        6) more veriety in enemy types, attributes health
+        6) more variety in enemy types, attributes health
         7) pause menu (level select, restart, quit to main)
         8) title screen (dificulty setting, character select,
            save states(level passcodes), enimey encylopedea)
         9) if the game is simple enough and time permits machine learning to
-           each the game to play itself (unlikely or is another project idea)
+           teach the game to play itself (unlikely or is another project idea)
 """
 import pygame  # allows for 'easy' gamedev
 
@@ -223,7 +222,7 @@ prevPress = False
 
 # main loop
 man = player(W/2, 400, 64, 64)
-zombie = enemy(W/4, 400, 64, 64, 3*W/4)
+zombie = enemy(W/4, 410, 64, 64, 3*W/4)
 run = True
 while run:
     clock.tick(FPS)
@@ -292,13 +291,13 @@ while run:
             mute = False
 
     # uses arrow keys or WASD to move left and right
-    if keys[pygame.K_a]:
+    if keys[pygame.K_a] and man.x > 0:
         man.x -= man.vel
         man.left = True
         man.right = False
         man.standing = False
 
-    elif keys[pygame.K_d]:
+    elif keys[pygame.K_d] and man.x + man.w < W:
         man.x += man.vel
         man.right = True
         man.left = False
@@ -307,11 +306,11 @@ while run:
         man.standing = True
         man.walkCount = 0
 
-    # allows to warp to ther other end of the screen
-    if man.x < -(3*man.w/4):
-        man.x = W - man.w/4
-    elif man.x > W:
-        man.x = -(3*man.w/4)
+    # # allows to warp to ther other end of the screen
+    # if man.x < -(3*man.w/4):
+    #     man.x = W - man.w/4
+    # elif man.x > W:
+    #     man.x = -(3*man.w/4)
 
     # jumping algorithim, needs improvemnt to parabolic in my oppinion
     if not (man.isJump):
