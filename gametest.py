@@ -38,9 +38,13 @@ mute = False
 W = 500
 H = 480
 
+# health bars
+zombieHealth = 10
+playerHealth = 10
+
 # opens a new window that is resizable named first game
 win = pygame.display.set_mode((W, H))  # , pygame.RESIZABLE)
-pygame.display.set_caption("First Game")
+pygame.display.set_caption("bullet escape")
 
 # loads all of the right walking art into an array to be cycled through
 walkRight = [pygame.image.load('pics/R1.png'),
@@ -64,7 +68,7 @@ walkLeft = [pygame.image.load('pics/L1.png'),
             pygame.image.load('pics/L8.png'),
             pygame.image.load('pics/L9.png')]
 
-bg = pygame.image.load('pics/bg.jpg')          # background image
+bg = pygame.image.load('pics/bg.jpg')  # background image, subject to change
 char = pygame.image.load('pics/standing.png')  # idle image
 
 # sets a clock and the FPS
@@ -76,6 +80,15 @@ jumpFrames = 9
 
 
 # class not necisarry but makes it cleaner for when we add more things
+class hitBox(object):
+    def __init__(self, x, y, w, h):
+        self.x = x
+        self.y = y
+        self.width = w
+        self.height = h
+        self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
+
+
 class player(object):
     def __init__(self, x, y, w, h):
         self.x = x
@@ -90,6 +103,7 @@ class player(object):
         self.walkCount = 0
         self.staning = True
         # self.sprint = False
+        self.hitbox = hitBox(self.x + 20, self.y, 28, 60)  # (x,y,w,h)
 
     # Does the drawing for the character here to clean up redrawGameWindow
     def draw(self, win):
@@ -127,6 +141,7 @@ class player(object):
                 win.blit(walkRight[0], (self.x, self.y))
             else:
                 win.blit(walkLeft[0], (self.x, self.y))
+        self.hitbox = hitBox(self.x + 20, self.y, 28, 60)  # redraws the hitbox
 
 
 class projectile(object):
@@ -137,11 +152,14 @@ class projectile(object):
         self.color = color
         self.facing = facing
         self.vel = 8 * facing
+        self.hitbox = hitBox(self.x-self.radius, self.y-self.radius, 2*self.radius, 2*self.radius)
 
     def draw(self, win):
         pygame.draw.circle(win, self.color, (self.x, self.y), self.radius)
+        self.hitbox = hitBox(self.x-self.radius, self.y-self.radius, 2*self.radius, 2*self.radius)
 
 
+# subject to change
 class enemy(object):
     walkRight = [pygame.image.load('pics/R1E.png'),
                  pygame.image.load('pics/R2E.png'),
@@ -172,9 +190,10 @@ class enemy(object):
         self.w = width
         self.h = height
         self.end = end
-        self.path = [self.x, self.end]
+        self.path = [self.x, self.end]  # need a more interesting walk pattern
         self.walkCount = 0
         self.vel = 3
+        self.hitbox = hitBox(self.x + 20, self.y, 28, 60)
 
     def draw(self, win):
         self.move()
@@ -186,7 +205,9 @@ class enemy(object):
         else:
             win.blit(self.walkLeft[self.walkCount//3], (self.x, self.y))
             self.walkCount += 1
+        self.hitbox = hitBox(self.x + 20, self.y, 28, 60)
 
+    # definitaly going to change, need a more interesting walk pattern
     def move(self):
         if self.vel > 0:
             if self.x + self.vel < self.path[1]:
@@ -201,13 +222,16 @@ class enemy(object):
                 self.vel *= -1
                 self.walkCount = 0
 
+    # determine what happens if the enemy is hit
+
 
 # redraws the window after every frame
 def redrawGameWindow():
 
     win.blit(bg, (0, 0))  # uses the picture stored in bg as the background
     man.draw(win)
-    zombie.draw(win)
+    if zombie:
+        zombie.draw(win)
     for bullet in bullets:
         bullet.draw(win)
     pygame.display.update()
@@ -224,6 +248,13 @@ prevPress = False
 man = player(W/2, 400, 64, 64)
 zombie = enemy(W/4, 410, 64, 64, 3*W/4)
 run = True
+
+
+def inBox(b):
+    if zombie:
+        return b.x > zombie.hitbox.x and b.x < zombie.hitbox.x+zombie.hitbox.width and b.y < zombie.hitbox.y+zombie.hitbox.height and b.y > zombie.hitbox.y
+
+
 while run:
     clock.tick(FPS)
 
@@ -244,6 +275,11 @@ while run:
             bullets.pop(bullets.index(bullet))
         else:
             bullet.x += bullet.vel
+        if(inBox(bullet)):
+            bullets.pop(bullets.index(bullet))
+            zombieHealth -= 1
+            if zombieHealth == 0:
+                zombie = False
 
     # stored a dict of ALL keyboard keys and whether they are being pressed
     keys = pygame.key.get_pressed()
@@ -306,7 +342,7 @@ while run:
         man.standing = True
         man.walkCount = 0
 
-    # # allows to warp to ther other end of the screen
+    # # allows to warp to ther other end of the screen **disabled**
     # if man.x < -(3*man.w/4):
     #     man.x = W - man.w/4
     # elif man.x > W:
@@ -330,5 +366,6 @@ while run:
             man.jumpCount = jumpFrames
 
     redrawGameWindow()
+
 
 pygame.quit()
