@@ -30,9 +30,8 @@ import pygame  # allows for 'easy' gamedev
 
 # initiates the pygame
 pygame.init()
-pygame.mixer.music.load("music.mp3")
+pygame.mixer.music.load("desert.mp3")
 pygame.mixer.music.play()
-
 mute = False
 # initial window sizes
 W = 500
@@ -297,6 +296,13 @@ while run:
     #     sprint = False
     #     vel = 5
 
+    if inBox(man):
+        playerHealth -= 1
+    if playerHealth == 0:
+        man = False
+        pygame.time.wait(30)
+        pygame.quit()
+
     # allows you to fire bullets (they dont clump any more)
     if keys[pygame.K_SPACE]:
         if bufferCount >= bulletBuffer:
@@ -341,12 +347,6 @@ while run:
     else:
         man.standing = True
         man.walkCount = 0
-
-    # # allows to warp to ther other end of the screen **disabled**
-    # if man.x < -(3*man.w/4):
-    #     man.x = W - man.w/4
-    # elif man.x > W:
-    #     man.x = -(3*man.w/4)
 
     # jumping algorithim, needs improvemnt to parabolic in my oppinion
     if not (man.isJump):
