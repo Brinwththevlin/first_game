@@ -108,8 +108,8 @@ class enemy(object):
 
 # initiates the pygame
 pygame.init()
-# pygame.mixer.music.load("music.mp3")
-# pygame.mixer.music.play()
+pygame.mixer.music.load("desert.mp3")
+pygame.mixer.music.play()
 mute = False
 
 # initial window sizes
@@ -145,7 +145,6 @@ invincibles = man.invincibleFrames
 
 # redraws the window after every frame
 def redrawGameWindow():
-    print("Check")
     # uses the picture stored in bg as the background
     win.blit(bg, (0, 0))
     man.draw(win)
@@ -155,15 +154,12 @@ def redrawGameWindow():
         bullet.draw(win)
     if man:
         win.blit(man.Hbar[man.maxHP-man.HP], (0, 0))
-        pygame.draw.rect(win, [225, 0, 0], man.hitbox.rect, 2)
     if zombie:
         win.blit(zombie.Hbar[zombie.maxHP - zombie.HP], (W-64, 0))
-        pygame.draw.rect(win, [0, 225, 225], zombie.hitbox.rect, 2)
     pygame.display.update()
 
 
 while run:
-    print("Check")
     clock.tick(FPS)
 
     for event in pygame.event.get():
